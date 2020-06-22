@@ -119,55 +119,22 @@ public class Main {
     //Funcion para convetir TXT a XML
     public static void convertirTXTtoXML() {
         try {
-            //.txt
-            in = new BufferedReader(new FileReader("Cliente.txt"));
-            //.xml
-            out = new StreamResult("Cliente.xml");
-            openXml();
+            in = new BufferedReader(new FileReader("Cliente.txt")); //archivo.txt ya creado
+            out = new StreamResult("Cliente.xml"); //archivo.xml a converitr
+            openXml();//---> Funcion que abre xml (Estructura)
             String str;
-            /*while ((str = in.readLine()) != null) {
-                proceso(str);
-            }*/
-
-            int counter = -1;
-            int counter2 = 49;
+            //While que lee cada linea del archivo.txt
             while ((str = in.readLine()) != null) {
-                counter++;
-                //counter2++;
-                if(counter % 6 == 0) {
-                    proceso1(str); // add DOCUMENT element
-                    continue;
-                }
-                if(counter % 6 == 1) {
-                    proceso2(str); // add NOMBRE element
-                    continue;
-                }
-                if(counter % 6 == 2) {
-                    proceso3(str); // add APELLIDO element
-                    continue;
-                }
-                if(counter % 6 == 3) {
-                    proceso4(str); // add NUMERO DE TRAJETA element
-                    continue;
-                }
-                if(counter % 6 == 4) {
-                    proceso5(str); // add TIPO element
-                    continue;
-                }
-                if(counter % 6 == 5) {
-                    proceso6(str); // add TELEFONO element
-                    continue;
-                }
+                proceso(str);
             }
-
             in.close();
-            closeXml();
+            closeXml();//---> Funcion que cierra xml (Estructura)
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    //Abre el archivo XML para empezar a crearlo
+    //Abre el archivo XML (Estructura) para empezar a crearlo
     public static void openXml() throws ParserConfigurationException, TransformerConfigurationException, SAXException {
 
         SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
@@ -182,84 +149,50 @@ public class Main {
         th.setResult(out);
         th.startDocument();
         atts = new AttributesImpl();
-        th.startElement(null, null, "Clientes", atts);
-        th.startElement("", "", "cliente", atts);
+        th.startElement("", "", "Clientes", atts);
     }
 
-    //Procesos para crear el archivo XML a traves de la informacion del .txt
+    //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
+    public static void proceso(String s)  throws SAXException {
 
-    public static void proceso1(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
+        String [] elements = s.split("\\;");
         atts.clear();
+        th.startElement("","","cliente",atts);
 
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "documento", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "documento");
+        th.startElement("","","documento",atts);
+        th.characters(elements[0].toCharArray(),0,elements[0].length());
+        th.endElement("","","documento");
+
+        th.startElement("","","primer-nombre",atts);
+        th.characters(elements[1].toCharArray(),0,elements[1].length());
+        th.endElement("","","primer-nombre");
+
+        th.startElement("","","apellido",atts);
+        th.characters(elements[2].toCharArray(),0,elements[2].length());
+        th.endElement("","","apellido");
+
+        th.startElement("","","credit-card",atts);
+        th.characters(elements[3].toCharArray(),0,elements[3].length());
+        th.endElement("","","credit-card");
+
+        th.startElement("","","tipo",atts);
+        th.characters(elements[4].toCharArray(),0,elements[4].length());
+        th.endElement("","","tipo");
+
+        th.startElement("","","telefono",atts);
+        th.characters(elements[5].toCharArray(),0,elements[5].length());
+        th.endElement("","","telefono");
+
+        th.endElement("","","cliente");
 
     }
 
-    public static void proceso2(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
-        atts.clear();
-
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "primer-nombre", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "primer-nombre");
-    }
-    public static void proceso3(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
-        atts.clear();
-
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "apellido", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "apellido");
-    }
-    public static void proceso4(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
-        atts.clear();
-
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "credit-card", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "credit-card");
-    }
-    public static void proceso5(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
-        atts.clear();
-
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "tipo", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "tipo");
-    }
-    public static void proceso6(String s)  throws SAXException {
-
-        String[] elements = s.split(" ");
-        atts.clear();
-
-        //Se inserta la informacion del .txt
-        th.startElement("", "", "telefono", atts);
-        th.characters(elements[0].toCharArray(), 0, elements[0].length());
-        th.endElement("", "", "telefono");
-    }
-
-
-
-    //Cierra el archivo XML
+    //Cierra el archivo.xml (Estructura)
     public static void closeXml() throws SAXException {
-        th.endElement("", "", "cliente");
-        th.endElement(null, null, "Clientes");
+        //th.endElement("", "", "cliente");
+        th.endElement("", "", "Clientes");
         th.endDocument();
     }
-
 
     //Lee en consola el archivo
     public static void leerXML(){
