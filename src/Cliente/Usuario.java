@@ -64,8 +64,8 @@ public class Usuario {
         this.tipoTarjeta = tipoTarjeta;
     }
 
-    public int getTelefono() {
-        return telefono;
+    public String getTelefono() {
+        return String.valueOf(telefono);
     }
 
     public void setTelefono(int telefono) {
