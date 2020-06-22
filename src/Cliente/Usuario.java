@@ -1,4 +1,4 @@
-package crearXML;
+package Cliente;
 
 public class Usuario {
 
@@ -19,6 +19,8 @@ public class Usuario {
         this.tipoTarjeta = tipoTarjeta;
         this.telefono = telefono;
     }
+
+    public Usuario(){}
 
     //Setters and Getters
 

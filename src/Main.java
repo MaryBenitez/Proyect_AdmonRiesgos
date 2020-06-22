@@ -1,13 +1,20 @@
-import crearXML.Usuario;
+import Cliente.Usuario;
 import org.w3c.dom.*;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.sax.SAXTransformerFactory;
+import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,16 +26,26 @@ public class Main {
      *
      * @param args the command line arguments
      */
+
+    private static BufferedReader in; //Entrada
+    private static StreamResult out; //Salida
+    private static TransformerHandler th;
+    private static AttributesImpl atts;
+
     public static void main(String[] args){
         String nomArchivo = "Clientes";
+
+
 
         List<Usuario> listaUsuarios = new ArrayList<Usuario>();
 
         listaUsuarios.add(new Usuario("05530797-8","Andrea","Benítez", "1234567890123","GOLD",77951321));
+        listaUsuarios.add(new Usuario("05530797-2","Andrea","Dominguez", "1234567890123","GOLD",77951321));
 
         try{
-            crearXML(nomArchivo, listaUsuarios);
-            leerXML();
+            //crearXML(nomArchivo, listaUsuarios);
+            //leerXML();
+            begin();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -49,7 +66,7 @@ public class Main {
             Element raiz = document.getDocumentElement();
             for (int i=0; i< listaUsuarios.size(); i++){
 
-                Element itemNode = document.createElement("Cliente");
+                Element itemNode = document.createElement("cliente");
 
                 //Obteniendo atributos del Usuario
                 Element duiNode = document.createElement("documento");
@@ -98,12 +115,104 @@ public class Main {
         }catch (ParserConfigurationException | TransformerException e){
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
         }
+
     }
+
+    public static void begin() {
+        try {
+            //.txt
+            in = new BufferedReader(new FileReader("Cliente.txt"));
+            //.xml
+            out = new StreamResult("Cliente.xml");
+            openXml();
+            String str;
+            while ((str = in.readLine()) != null) {
+                proceso(str);
+            }
+            in.close();
+            closeXml();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void openXml() throws ParserConfigurationException, TransformerConfigurationException, SAXException {
+
+        SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
+        th = tf.newTransformerHandler();
+
+        // SALIDA XML
+        Transformer serializer = th.getTransformer();
+        //serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        serializer.setOutputProperty(OutputKeys.INDENT,"yes");
+
+        th.setResult(out);
+        th.startDocument();
+        atts = new AttributesImpl();
+        th.startElement(null, null, "Clientes", atts);
+        th.startElement("", "", "cliente", atts);
+    }
+
+    public static void proceso(String s)  throws SAXException {
+
+        //String[] elements = s.split(" ");
+        atts.clear();
+
+
+        th.startElement("", "", "documento", atts);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement("", "", "documento");
+
+
+
+
+/*
+        th.startElement(null, null, "documento", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "documento");
+
+        th.startElement(null, null, "primer-nombre", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "primer-nombre");
+
+        th.startElement(null, null, "apellido", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "apellido");
+
+        th.startElement(null, null, "credit-card", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "credit-card");
+
+        th.startElement(null, null, "tipo", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "tipo");
+
+        th.startElement(null, null, "telefono", null);
+        th.characters(s.toCharArray(), 0, s.length());
+        th.endElement(null, null, "telefono");
+        */
+
+    }
+
+    public static void closeXml() throws SAXException {
+        th.endElement("", "", "cliente");
+        th.endElement(null, null, "Clientes");
+        th.endDocument();
+    }
+
+
+
+
+
+
+
+
+
 
     //Lee en consola el archivo
     public static void leerXML(){
         try{
-            File archivo = new File("Clientes.xml");
+            File archivo = new File("Prueba.txt");
 
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = factory.newDocumentBuilder();
