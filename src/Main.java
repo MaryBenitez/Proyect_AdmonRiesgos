@@ -45,7 +45,7 @@ public class Main {
         try{
             //crearXML(nomArchivo, listaUsuarios);
             //leerXML();
-            begin();
+            convertirTXTtoXML();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -118,7 +118,8 @@ public class Main {
 
     }
 
-    public static void begin() {
+    //Funcion para convetir TXT a XML
+    public static void convertirTXTtoXML() {
         try {
             //.txt
             in = new BufferedReader(new FileReader("Cliente.txt"));
@@ -136,6 +137,7 @@ public class Main {
         }
     }
 
+    //Abre el archivo XML para empezar a crearlo
     public static void openXml() throws ParserConfigurationException, TransformerConfigurationException, SAXException {
 
         SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
@@ -143,9 +145,9 @@ public class Main {
 
         // SALIDA XML
         Transformer serializer = th.getTransformer();
-        //serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
         serializer.setOutputProperty(OutputKeys.INDENT,"yes");
 
+        //Se empiezan a poner las etiquetas
         th.setResult(out);
         th.startDocument();
         atts = new AttributesImpl();
@@ -153,12 +155,13 @@ public class Main {
         th.startElement("", "", "cliente", atts);
     }
 
+    //Proceso para crear el archivo XML a traves de la informacion del .txt
     public static void proceso(String s)  throws SAXException {
 
         //String[] elements = s.split(" ");
         atts.clear();
 
-
+        //Se inserta la informacion del .txt
         th.startElement("", "", "documento", atts);
         th.characters(s.toCharArray(), 0, s.length());
         th.endElement("", "", "documento");
@@ -194,6 +197,7 @@ public class Main {
 
     }
 
+    //Cierra el archivo XML
     public static void closeXml() throws SAXException {
         th.endElement("", "", "cliente");
         th.endElement(null, null, "Clientes");
