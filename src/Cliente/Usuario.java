@@ -23,31 +23,12 @@ public class Usuario {
     }
 
     public Usuario(){}
-
-    /*
-    //POJO que utilizaremos para leer la cedena JSON de un archivo, lo asignaremos a esta clase Usuario
-    public String toString(){
-        //StringBuilder sirve para almacenar cadenas de caracteres
-        //--->*StringBuilder sb = new StringBuilder();* Construye un StringBuilder vacío y con una capacidad por defecto de 16 carácteres.
-        StringBuilder sb = new StringBuilder();
-        //--->*append(..)Añade al final del StringBuilder a la que se aplica, un String o la representación en forma de String de un dato asociado a una variable primitiva
-        sb.append("************************************");
-        sb.append("\ndocumento: ").append(documento);
-        sb.append("\nprimer-nombre: ").append(nombre);
-        sb.append("\napellido: ").append(apellido);
-        sb.append("\ncredit-card: ").append(nTarjeta);
-        sb.append("\ntipo: ").append(tipoTarjeta);
-        sb.append("\ntelefono: ").append(telefono);
-        sb.append("\n************************************");
-        return sb.toString();
-    }*/
-
     //Setters and Getters
-
 
     public int getIdCliente() {
         return idCliente;
     }
+
     public void setIdCliente(int idCliente) {
         this.idCliente = idCliente;
     }

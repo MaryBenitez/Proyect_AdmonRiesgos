@@ -42,6 +42,7 @@ public class Main {
             //crearXML(nomArchivo, listaUsuarios);
             convertirTXTtoXML();
             convertirTXTtoJson();
+            convertirXMLtoTXT();
 
         }catch (Exception e){
             e.printStackTrace();
@@ -193,6 +194,7 @@ public class Main {
         th.endDocument();
     }
 
+    //Funcion para convetir TXT a JSON
     public static void convertirTXTtoJson() throws IOException {
 
         //Crea una matriz donde se almacenaran los datos
@@ -233,8 +235,8 @@ public class Main {
         Writer writer = null;
         try{
             //Se crea el fichero JSON en la ruta establecida
-            writer = new FileWriter("C:\\Users\\maris\\IdeaProjects\\ProyectoARI\\Cliente.json");
-            System.out.println(gson.toJson(datasets)); //consola
+            writer = new FileWriter("Cliente.json");
+            //System.out.println(gson.toJson(datasets)); //consola
             //Se crea el JSON y lo escribimos en el archivo.
             gson.toJson(datasets, writer);
 
@@ -253,5 +255,46 @@ public class Main {
             }
         }
     }
+
+    public static void convertirXMLtoTXT() throws IOException{
+
+        try {
+            //Archivo.txt que va a crear
+            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente2.txt"));
+            //Archivo que leerá
+            File fXmlFile = new File("Cliente.xml");
+
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+            Document doc = dBuilder.parse(fXmlFile);
+
+            //Etiqueta va a leer para pasarla a texto
+            NodeList nList = doc.getElementsByTagName("cliente");
+
+            for (int i = 0; i < nList.getLength(); i++){
+                Node node = nList.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    Element eElement = (Element) node;
+                    if(eElement.hasChildNodes()) {
+                        NodeList nl = node.getChildNodes();
+                        for(int j=0; j<nl.getLength(); j++) {
+                            Node nd = nl.item(j);
+                            String name= nd.getTextContent();
+                            if (name != null && !name.trim().equals("")){
+                                writer.write(nd.getTextContent().trim() + ";");
+                            }
+                        }
+                    }
+                }
+                writer.write("\n");
+            }
+            writer.close();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }
+
 
