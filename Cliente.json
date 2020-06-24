@@ -1,5 +1,14 @@
 [
   {
+    "id": "1",
+    "documento": "03991034-7",
+    "nombre": "Jaime",
+    "apellido": "Climaco",
+    "tarjeta": "4567467811114",
+    "tipo": "GOLD",
+    "telefono": "22507878"
+  },
+  {
     "id": "2",
     "documento": "01992635-1",
     "nombre": "Juan",

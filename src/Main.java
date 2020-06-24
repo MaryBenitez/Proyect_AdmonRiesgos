@@ -40,7 +40,6 @@ public class Main {
 
         try{
             //crearXML(nomArchivo, listaUsuarios);
-            //leerXML();
             convertirTXTtoXML();
             convertirTXTtoJson();
 
@@ -118,17 +117,18 @@ public class Main {
 
     //Funcion para convetir TXT a XML
     public static void convertirTXTtoXML() {
+        String line;
         try {
             in = new BufferedReader(new FileReader("Cliente.txt")); //archivo.txt ya creado
             out = new StreamResult("Cliente.xml"); //archivo.xml a converitr
-            openXml();//---> Funcion que abre xml (Estructura)
-            String str;
-            //While que lee cada linea del archivo.txt
-            while ((str = in.readLine()) != null) {
+                openXml();//---> Funcion que abre xml (Estructura)
+                String str;
+                //While que lee cada linea del archivo.txt
+                while ((str = in.readLine()) != null) {
                     proceso(str);
-            }
-            in.close();
-            closeXml();//---> Funcion que cierra xml (Estructura)
+                }
+                in.close();
+                closeXml();//---> Funcion que cierra xml (Estructura)
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -193,67 +193,22 @@ public class Main {
         th.endDocument();
     }
 
-    //Lee en consola el archivo
-    public static void leerXML(){
-        try{
-            File archivo = new File("Prueba.txt");
-
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder documentBuilder = factory.newDocumentBuilder();
-            Document document = documentBuilder.parse(archivo);
-
-            document.getDocumentElement().normalize();
-
-            System.out.println("Elemento raiz: " + document.getDocumentElement().getNodeName());
-
-            NodeList listaUsuarios = document.getElementsByTagName("Cliente");
-
-            for (int i=0; i < listaUsuarios.getLength(); i++){
-                Node nodo = listaUsuarios.item(i);
-
-                System.out.println("Elemento: " + nodo.getNodeName());
-
-                if(nodo.getNodeType() == Node.ELEMENT_NODE){
-                    Element element = (Element) nodo;
-
-                    System.out.println("documento: " + element.getElementsByTagName("documento").item(i).getTextContent());
-                    System.out.println("primer-nombre: " + element.getElementsByTagName("primer-nombre").item(i).getTextContent());
-                    System.out.println("apellido: " + element.getElementsByTagName("apellido").item(i).getTextContent());
-                    System.out.println("credit-card: " + element.getElementsByTagName("credit-card").item(i).getTextContent());
-                    System.out.println("tipo: " + element.getElementsByTagName("tipo").item(i).getTextContent());
-                    System.out.println("telefono: " + element.getElementsByTagName("telefono").item(i).getTextContent());
-
-                    System.out.println("");
-
-                }
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
     public static void convertirTXTtoJson() throws IOException {
 
         //Crea una matriz donde se almacenaran los datos
         JsonArray datasets = new JsonArray();
 
-        //Archivo que leera
-        File file = new File("C:\\Users\\maris\\IdeaProjects\\ProyectoARI\\Cliente.txt");
-
-        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("Cliente.txt"))) {
             //Titlos para el JSON
             String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
-            String line;//--> Para las linea que leera del txt
+            String line ;//--> Para las linea que leera del txt
             boolean flag = true;
             List<String> columns = null;
             while ((line = br.readLine()) != null) {
+                //System.out.println(line);
                 if (flag) {
-                    flag = false;
                     //process Titulos;
                     columns = Arrays.asList(titulo.split(";")); //---> delimitador
-                } else {
                     //Se crea el objeto JSON y lo almacena temporalmente
                     JsonObject obj = new JsonObject();
                     //Información del cliente (Linea por linea del archivo)
@@ -263,12 +218,14 @@ public class Main {
                     }
                     //Agrega los datos a la matriz
                     datasets.add(obj);
+                } else {
+                    flag = false;
                 }
             }
         } catch (FileNotFoundException fnfe) {
-            System.out.println("File not found.");
+            System.out.println("Archivo no encontrado");
         } catch (IOException io) {
-            System.out.println("Cannot read file.");
+            System.out.println("No se pudo leer el archivo");
         }
 
         //Aqui se le da el formato de JSON y se empieza a crear
