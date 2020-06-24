@@ -1,0 +1,29 @@
+[
+  {
+    "id": "2",
+    "documento": "01992635-1",
+    "nombre": "Juan",
+    "apellido": "Perez",
+    "tarjeta": "1053467877774",
+    "tipo": "SILVER",
+    "telefono": "77556879"
+  },
+  {
+    "id": "3",
+    "documento": "05530797-8",
+    "nombre": "Andrea",
+    "apellido": "Benitez",
+    "tarjeta": "1053467871234",
+    "tipo": "GOLD",
+    "telefono": "77951321"
+  },
+  {
+    "id": "4",
+    "documento": "12345678-9",
+    "nombre": "Irma",
+    "apellido": "Elias",
+    "tarjeta": "1234467871234",
+    "tipo": "SILVER",
+    "telefono": "79251035"
+  }
+]

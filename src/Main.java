@@ -1,4 +1,5 @@
 import Cliente.Usuario;
+import com.google.gson.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
@@ -11,14 +12,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.ArrayList;
+import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 public class Main {
 
@@ -44,6 +42,8 @@ public class Main {
             //crearXML(nomArchivo, listaUsuarios);
             //leerXML();
             convertirTXTtoXML();
+            convertirTXTtoJson();
+
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -125,7 +125,7 @@ public class Main {
             String str;
             //While que lee cada linea del archivo.txt
             while ((str = in.readLine()) != null) {
-                proceso(str);
+                    proceso(str);
             }
             in.close();
             closeXml();//---> Funcion que cierra xml (Estructura)
@@ -155,32 +155,32 @@ public class Main {
     //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
     public static void proceso(String s)  throws SAXException {
 
-        String [] elements = s.split("\\;");
+        String [] elements = s.split("\\;"); //--->Delimitador
         atts.clear();
         th.startElement("","","cliente",atts);
 
         th.startElement("","","documento",atts);
-        th.characters(elements[0].toCharArray(),0,elements[0].length());
+        th.characters(elements[1].toCharArray(),0,elements[1].length());
         th.endElement("","","documento");
 
         th.startElement("","","primer-nombre",atts);
-        th.characters(elements[1].toCharArray(),0,elements[1].length());
+        th.characters(elements[2].toCharArray(),0,elements[2].length());
         th.endElement("","","primer-nombre");
 
         th.startElement("","","apellido",atts);
-        th.characters(elements[2].toCharArray(),0,elements[2].length());
+        th.characters(elements[3].toCharArray(),0,elements[3].length());
         th.endElement("","","apellido");
 
         th.startElement("","","credit-card",atts);
-        th.characters(elements[3].toCharArray(),0,elements[3].length());
+        th.characters(elements[4].toCharArray(),0,elements[4].length());
         th.endElement("","","credit-card");
 
         th.startElement("","","tipo",atts);
-        th.characters(elements[4].toCharArray(),0,elements[4].length());
+        th.characters(elements[5].toCharArray(),0,elements[5].length());
         th.endElement("","","tipo");
 
         th.startElement("","","telefono",atts);
-        th.characters(elements[5].toCharArray(),0,elements[5].length());
+        th.characters(elements[6].toCharArray(),0,elements[6].length());
         th.endElement("","","telefono");
 
         th.endElement("","","cliente");
@@ -189,7 +189,6 @@ public class Main {
 
     //Cierra el archivo.xml (Estructura)
     public static void closeXml() throws SAXException {
-        //th.endElement("", "", "cliente");
         th.endElement("", "", "Clientes");
         th.endDocument();
     }
@@ -234,4 +233,68 @@ public class Main {
         }
     }
 
+
+    public static void convertirTXTtoJson() throws IOException {
+
+        //Crea una matriz donde se almacenaran los datos
+        JsonArray datasets = new JsonArray();
+
+        //Archivo que leera
+        File file = new File("C:\\Users\\maris\\IdeaProjects\\ProyectoARI\\Cliente.txt");
+
+        try (BufferedReader br = new BufferedReader(new FileReader(file))) {
+            //Titlos para el JSON
+            String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
+            String line;//--> Para las linea que leera del txt
+            boolean flag = true;
+            List<String> columns = null;
+            while ((line = br.readLine()) != null) {
+                if (flag) {
+                    flag = false;
+                    //process Titulos;
+                    columns = Arrays.asList(titulo.split(";")); //---> delimitador
+                } else {
+                    //Se crea el objeto JSON y lo almacena temporalmente
+                    JsonObject obj = new JsonObject();
+                    //Información del cliente (Linea por linea del archivo)
+                    List<String> chunks = Arrays.asList(line.split(";")); //---> delimitador
+                    for (int i = 0; i < columns.size(); i++) {
+                        obj.addProperty(columns.get(i), chunks.get(i));
+                    }
+                    //Agrega los datos a la matriz
+                    datasets.add(obj);
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            System.out.println("File not found.");
+        } catch (IOException io) {
+            System.out.println("Cannot read file.");
+        }
+
+        //Aqui se le da el formato de JSON y se empieza a crear
+        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+        Writer writer = null;
+        try{
+            //Se crea el fichero JSON en la ruta establecida
+            writer = new FileWriter("C:\\Users\\maris\\IdeaProjects\\ProyectoARI\\Cliente.json");
+            System.out.println(gson.toJson(datasets)); //consola
+            //Se crea el JSON y lo escribimos en el archivo.
+            gson.toJson(datasets, writer);
+
+        }catch(IOException e){
+            e.printStackTrace();
+        } finally{
+            // Cerramos el archivo
+            try {
+                //Verificamos que no este nulo
+                if (null != writer) {
+                    writer.flush();
+                    writer.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
 }
+
