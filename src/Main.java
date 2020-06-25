@@ -22,7 +22,6 @@ import java.util.List;
 public class Main {
 
     /**
-     *
      * @param args the command line arguments
      */
 
@@ -31,17 +30,17 @@ public class Main {
     private static TransformerHandler th;
     private static AttributesImpl atts;
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
 
-        try{
+        try {
             //crearXML(nomArchivo, listaUsuarios);
             convertirTXTtoXML();
             convertirTXTtoJson();
             convertirXMLtoTXT();
             convertirJSONtoTXT();
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -53,14 +52,14 @@ public class Main {
         try {
             in = new BufferedReader(new FileReader("Cliente.txt")); //archivo.txt ya creado
             out = new StreamResult("Cliente.xml"); //archivo.xml a converitr
-                openXml();//---> Funcion que abre xml (Estructura)
-                String str;
-                //While que lee cada linea del archivo.txt
-                while ((str = in.readLine()) != null) {
-                    proceso(str);
-                }
-                in.close();
-                closeXml();//---> Funcion que cierra xml (Estructura)
+            openXml();//---> Funcion que abre xml (Estructura)
+            String str;
+            //While que lee cada linea del archivo.txt
+            while ((str = in.readLine()) != null) {
+                proceso(str);
+            }
+            in.close();
+            closeXml();//---> Funcion que cierra xml (Estructura)
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -75,7 +74,7 @@ public class Main {
         // SALIDA XML
         Transformer serializer = th.getTransformer();
         serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
-        serializer.setOutputProperty(OutputKeys.INDENT,"yes");
+        serializer.setOutputProperty(OutputKeys.INDENT, "yes");
 
         //Se empiezan a poner las etiquetas
         th.setResult(out);
@@ -85,37 +84,37 @@ public class Main {
     }
 
     //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
-    public static void proceso(String s)  throws SAXException {
+    public static void proceso(String s) throws SAXException {
 
-        String [] elements = s.split("\\;"); //--->Delimitador
+        String[] elements = s.split("\\;"); //--->Delimitador
         atts.clear();
-        th.startElement("","","cliente",atts);
+        th.startElement("", "", "cliente", atts);
 
-        th.startElement("","","documento",atts);
-        th.characters(elements[1].toCharArray(),0,elements[1].length());
-        th.endElement("","","documento");
+        th.startElement("", "", "documento", atts);
+        th.characters(elements[1].toCharArray(), 0, elements[1].length());
+        th.endElement("", "", "documento");
 
-        th.startElement("","","primer-nombre",atts);
-        th.characters(elements[2].toCharArray(),0,elements[2].length());
-        th.endElement("","","primer-nombre");
+        th.startElement("", "", "primer-nombre", atts);
+        th.characters(elements[2].toCharArray(), 0, elements[2].length());
+        th.endElement("", "", "primer-nombre");
 
-        th.startElement("","","apellido",atts);
-        th.characters(elements[3].toCharArray(),0,elements[3].length());
-        th.endElement("","","apellido");
+        th.startElement("", "", "apellido", atts);
+        th.characters(elements[3].toCharArray(), 0, elements[3].length());
+        th.endElement("", "", "apellido");
 
-        th.startElement("","","credit-card",atts);
-        th.characters(elements[4].toCharArray(),0,elements[4].length());
-        th.endElement("","","credit-card");
+        th.startElement("", "", "credit-card", atts);
+        th.characters(elements[4].toCharArray(), 0, elements[4].length());
+        th.endElement("", "", "credit-card");
 
-        th.startElement("","","tipo",atts);
-        th.characters(elements[5].toCharArray(),0,elements[5].length());
-        th.endElement("","","tipo");
+        th.startElement("", "", "tipo", atts);
+        th.characters(elements[5].toCharArray(), 0, elements[5].length());
+        th.endElement("", "", "tipo");
 
-        th.startElement("","","telefono",atts);
-        th.characters(elements[6].toCharArray(),0,elements[6].length());
-        th.endElement("","","telefono");
+        th.startElement("", "", "telefono", atts);
+        th.characters(elements[6].toCharArray(), 0, elements[6].length());
+        th.endElement("", "", "telefono");
 
-        th.endElement("","","cliente");
+        th.endElement("", "", "cliente");
 
     }
 
@@ -134,7 +133,7 @@ public class Main {
         try (BufferedReader br = new BufferedReader(new FileReader("Cliente.txt"))) {
             //Titlos para el JSON
             String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
-            String line ;//--> Para las linea que leera del txt
+            String line;//--> Para las linea que leera del txt
             boolean flag = true;
             List<String> columns = null;
             while ((line = br.readLine()) != null) {
@@ -164,16 +163,16 @@ public class Main {
         //Aqui se le da el formato de JSON y se empieza a crear
         Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
         Writer writer = null;
-        try{
+        try {
             //Se crea el fichero JSON en la ruta establecida
             writer = new FileWriter("Cliente.json");
             //System.out.println(gson.toJson(datasets)); //consola
             //Se crea el JSON y lo escribimos en el archivo.
             gson.toJson(datasets, writer);
 
-        }catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally{
+        } finally {
             // Cerramos el archivo
             try {
                 //Verificamos que no este nulo
@@ -187,7 +186,7 @@ public class Main {
         }
     }
 
-    public static void convertirXMLtoTXT() throws IOException{
+    public static void convertirXMLtoTXT() throws IOException {
 
         try {
             //Archivo.txt que va a crear
@@ -203,21 +202,21 @@ public class Main {
             NodeList nList = doc.getElementsByTagName("cliente");
 
             //Nodo Padre
-            for (int i = 0; i < nList.getLength(); i++){
+            for (int i = 0; i < nList.getLength(); i++) {
                 Node node = nList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     //Creo un elemento que obtendra los hijos
                     Element eElement = (Element) node;
-                    if(eElement.hasChildNodes()) {
+                    if (eElement.hasChildNodes()) {
                         NodeList nl = node.getChildNodes();
-                        for(int j=0; j<nl.getLength(); j++) {
+                        for (int j = 0; j < nl.getLength(); j++) {
                             Node nd = nl.item(j);
-                            String name= nd.getTextContent();
+                            String name = nd.getTextContent();
                             //Compruebo que no este vacio y escribo en el archivo.txt
-                            if (name != null && !name.trim().equals("")){
+                            if (name != null && !name.trim().equals("")) {
                                 writer.write(nd.getTextContent().trim());
                                 //Para que el último dato no tenga el delimitador
-                                if(j < nl.getLength()-2){
+                                if (j < nl.getLength() - 2) {
                                     writer.write(";");
                                 }
                             }
@@ -227,16 +226,50 @@ public class Main {
                 writer.write("\n");
             }
             writer.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void convertirJSONtoTXT(){
+    public static void convertirJSONtoTXT() throws IOException {
+        JsonArray datasets = new JsonArray();
+
+        try (BufferedReader br = new BufferedReader(new FileReader("Cliente.json"))) {
+            //Titlos para el JSON
+            String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
+            String line;//--> Para las linea que leera del txt
+            boolean flag = true;
+            List<String> columns = null;
+            while ((line = br.readLine()) != null) {
+                //System.out.println(line);
+                if (flag) {
+                    //process Titulos;
+                    columns = Arrays.asList(line.split(":"+"\"")); //---> delimitador
+
+                    //Se crea el objeto JSON y lo almacena temporalmente
+                    JsonObject obj = new JsonObject();
+                    //Información del cliente (Linea por linea del archivo)
+                    List<String> chunks = Arrays.asList(line.split("\",")); //---> delimitador
+
+                    for (int i = 0; i < columns.size(); i++) {
+                        //System.out.println(columns.get(i));
+                        //System.out.printf(columns.get(i), chunks.get(i));
+                        System.out.println(chunks.get(i));
+                        //obj.addProperty(columns.get(i), chunks.get(i));
+                    }
+                    //Agrega los datos a la matriz
+                    datasets.add(obj);
+                } else {
+                    flag = false;
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            System.out.println("Archivo no encontrado");
+        } catch (IOException io) {
+            System.out.println("No se pudo leer el archivo");
+        }
 
     }
-
 }
 
 
