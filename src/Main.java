@@ -1,4 +1,3 @@
-import Cliente.Cliente;
 import com.google.gson.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -45,9 +44,6 @@ public class Main {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        Gson gson = new Gson();
-        String json = gson.toJson(cliente);
 
     }
 
@@ -238,30 +234,6 @@ public class Main {
     }
 
     public static void convertirJSONtoTXT(){
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*
-        BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente3.txt"));
-
-        try (Reader reader = new FileReader("Cleinte.json")) {
-            Gson gson = new Gson();
-            Node[] features = gson.fromJson(reader, Node[].class);
-            // work with features
-        }*/
 
     }
 
