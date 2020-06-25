@@ -1,22 +1,24 @@
-import Cliente.Usuario;
+import Cliente.Cliente;
 import com.google.gson.*;
-import org.w3c.dom.*;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class Main {
 
@@ -31,88 +33,21 @@ public class Main {
     private static AttributesImpl atts;
 
     public static void main(String[] args){
-        String nomArchivo = "Clientes";
 
-        //List<Usuario> listaUsuarios = new ArrayList<Usuario>();
-
-       // listaUsuarios.add(new Usuario("05530797-8","Andrea","Benítez", "1234567890123","GOLD",77951321));
-       // listaUsuarios.add(new Usuario("05530797-2","Andrea","Dominguez", "1234567890123","GOLD",77951321));
 
         try{
             //crearXML(nomArchivo, listaUsuarios);
             convertirTXTtoXML();
             convertirTXTtoJson();
             convertirXMLtoTXT();
+            convertirJSONtoTXT();
 
         }catch (Exception e){
             e.printStackTrace();
         }
 
-    }
-
-    //Funcion para crear el archivo XML
-    public static void crearXML(String nomArchivo, List<Usuario> listaUsuarios){
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
-        try{
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            DOMImplementation implementation = builder.getDOMImplementation();
-            Document document = implementation.createDocument(null, nomArchivo, null);
-            document.setXmlVersion("1.0");
-
-            //Nodo Raiz donde recorrera la lista de los usuarios
-            Element raiz = document.getDocumentElement();
-            for (int i=0; i< listaUsuarios.size(); i++){
-
-                Element itemNode = document.createElement("cliente");
-
-                //Obteniendo atributos del Usuario
-                Element duiNode = document.createElement("documento");
-                Text nodeDuiValue = document.createTextNode(""+listaUsuarios.get(i).getDocumento());
-                duiNode.appendChild(nodeDuiValue);
-
-                Element nombreNode = document.createElement("primer-nombre");
-                Text nodeNombreValue = document.createTextNode(""+listaUsuarios.get(i).getNombre());
-                nombreNode.appendChild(nodeNombreValue);
-
-                Element apellidoNode = document.createElement("apellido");
-                Text nodeApellidoValue = document.createTextNode(""+listaUsuarios.get(i).getApellido());
-                apellidoNode.appendChild(nodeApellidoValue);
-
-                Element nTarjetaNode = document.createElement("credit-card");
-                Text nodeNTarjetaValue = document.createTextNode(""+listaUsuarios.get(i).getNtarjeta());
-                nTarjetaNode.appendChild(nodeNTarjetaValue);
-
-                Element tipoTarjetaNode = document.createElement("tipo");
-                Text nodeTipoTarjetaValue = document.createTextNode(""+listaUsuarios.get(i).getTipoTarjeta());
-                tipoTarjetaNode.appendChild(nodeTipoTarjetaValue);
-
-                Element telefonoNode = document.createElement("telefono");
-                Text nodeTelefonoValue = document.createTextNode(""+listaUsuarios.get(i).getTelefono());
-                telefonoNode.appendChild(nodeTelefonoValue);
-
-                //Coloca los atributos del usuario
-                itemNode.appendChild(duiNode);
-                itemNode.appendChild(nombreNode);
-                itemNode.appendChild(apellidoNode);
-                itemNode.appendChild(nTarjetaNode);
-                itemNode.appendChild(tipoTarjetaNode);
-                itemNode.appendChild(telefonoNode);
-
-                raiz.appendChild(itemNode);
-            }
-
-            //Generar XML
-            Source source = new DOMSource(document);
-
-            //Donde se guardara
-            Result result = new StreamResult(new java.io.File(nomArchivo+".xml"));
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            transformer.transform(source, result);
-
-        }catch (ParserConfigurationException | TransformerException e){
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, e);
-        }
+        Gson gson = new Gson();
+        String json = gson.toJson(cliente);
 
     }
 
@@ -260,7 +195,7 @@ public class Main {
 
         try {
             //Archivo.txt que va a crear
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente2.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente-convertivo-xml.txt"));
             //Archivo que leerá
             File fXmlFile = new File("Cliente.xml");
 
@@ -271,17 +206,24 @@ public class Main {
             //Etiqueta va a leer para pasarla a texto
             NodeList nList = doc.getElementsByTagName("cliente");
 
+            //Nodo Padre
             for (int i = 0; i < nList.getLength(); i++){
                 Node node = nList.item(i);
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    //Creo un elemento que obtendra los hijos
                     Element eElement = (Element) node;
                     if(eElement.hasChildNodes()) {
                         NodeList nl = node.getChildNodes();
                         for(int j=0; j<nl.getLength(); j++) {
                             Node nd = nl.item(j);
                             String name= nd.getTextContent();
+                            //Compruebo que no este vacio y escribo en el archivo.txt
                             if (name != null && !name.trim().equals("")){
-                                writer.write(nd.getTextContent().trim() + ";");
+                                writer.write(nd.getTextContent().trim());
+                                //Para que el último dato no tenga el delimitador
+                                if(j < nl.getLength()-2){
+                                    writer.write(";");
+                                }
                             }
                         }
                     }
@@ -293,6 +235,34 @@ public class Main {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void convertirJSONtoTXT(){
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+        BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente3.txt"));
+
+        try (Reader reader = new FileReader("Cleinte.json")) {
+            Gson gson = new Gson();
+            Node[] features = gson.fromJson(reader, Node[].class);
+            // work with features
+        }*/
+
     }
 
 }

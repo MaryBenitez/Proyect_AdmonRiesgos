@@ -1,18 +1,30 @@
 package Cliente;
 
-public class Usuario {
+import com.google.gson.annotations.SerializedName;
+
+public class Cliente {
 
     //Atributos
+    @SerializedName("id")
     private int idCliente;
+    @SerializedName("documento")
     private String documento;
+    @SerializedName("primer-noombre")
     private String nombre;
+    @SerializedName("apellido")
     private String apellido;
+    @SerializedName("credit-card")
     private String nTarjeta;
+    @SerializedName("tipo")
     private String tipoTarjeta;
+    @SerializedName("telefono")
     private int telefono;
 
+    //JSON
+
+
     //Constructor
-    public Usuario(int idCliente, String documento, String nombre, String apellido, String ntarjeta, String tipoTarjeta, int telefono) {
+    public Cliente(int idCliente, String documento, String nombre, String apellido, String ntarjeta, String tipoTarjeta, int telefono) {
         this.idCliente = idCliente;
         this.documento = documento;
         this.nombre = nombre;
@@ -22,7 +34,7 @@ public class Usuario {
         this.telefono = telefono;
     }
 
-    public Usuario(){}
+    public Cliente(){}
     //Setters and Getters
 
     public int getIdCliente() {
