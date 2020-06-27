@@ -1,4 +1,9 @@
+import Cliente.Cliente;
 import com.google.gson.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -30,7 +35,16 @@ public class Main {
     private static TransformerHandler th;
     private static AttributesImpl atts;
 
+    private static String id;
+    private static String issuer;
+    private static String subject;
+
+    private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
+
+
     public static void main(String[] args) {
+
+        Cliente cliente = new Cliente();
 
 
         try {
@@ -132,7 +146,7 @@ public class Main {
 
         try (BufferedReader br = new BufferedReader(new FileReader("Cliente.txt"))) {
             //Titlos para el JSON
-            String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
+            String titulo = "id;documento;primer-nombre;apellido;credit-card;tipo;telefono";
             String line;//--> Para las linea que leera del txt
             boolean flag = true;
             List<String> columns = null;
@@ -190,7 +204,7 @@ public class Main {
 
         try {
             //Archivo.txt que va a crear
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente-convertivo-xml.txt"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente-convertido-XML.txt"));
             //Archivo que leerá
             File fXmlFile = new File("Cliente.xml");
 
@@ -231,45 +245,89 @@ public class Main {
         }
     }
 
-    public static void convertirJSONtoTXT() throws IOException {
-        JsonArray datasets = new JsonArray();
+    public static void convertirJSONtoTXT() throws IOException, ParseException {
 
-        try (BufferedReader br = new BufferedReader(new FileReader("Cliente.json"))) {
-            //Titlos para el JSON
-            String titulo = "id;documento;nombre;apellido;tarjeta;tipo;telefono";
-            String line;//--> Para las linea que leera del txt
-            boolean flag = true;
-            List<String> columns = null;
-            while ((line = br.readLine()) != null) {
-                //System.out.println(line);
-                if (flag) {
-                    //process Titulos;
-                    columns = Arrays.asList(line.split(":"+"\"")); //---> delimitador
+        //Archivo al que vamos a reescribir el JSON
+        Writer writer = null;
+        writer = new FileWriter("Cliente-convertido-JSON.txt");
 
-                    //Se crea el objeto JSON y lo almacena temporalmente
-                    JsonObject obj = new JsonObject();
-                    //Información del cliente (Linea por linea del archivo)
-                    List<String> chunks = Arrays.asList(line.split("\",")); //---> delimitador
+        JSONParser parser = new JSONParser();
+        JSONArray a = (JSONArray) parser.parse(new FileReader("Cliente.json"));
+        try {
+            for (Object o : a) {
 
-                    for (int i = 0; i < columns.size(); i++) {
-                        //System.out.println(columns.get(i));
-                        //System.out.printf(columns.get(i), chunks.get(i));
-                        System.out.println(chunks.get(i));
-                        //obj.addProperty(columns.get(i), chunks.get(i));
-                    }
-                    //Agrega los datos a la matriz
-                    datasets.add(obj);
-                } else {
-                    flag = false;
+                JSONObject jsonObject =  (JSONObject) o;
+
+                String id = (String) jsonObject.get("id");
+                //System.out.println(id);
+                String doc = (String) jsonObject.get("documento");
+                //System.out.println(doc);
+                String nombre = (String) jsonObject.get("primer-nombre");
+                //System.out.println(nombre);
+                String apellido = (String) jsonObject.get("apellido");
+                //System.out.println(apellido);
+                String nTarjeta = (String) jsonObject.get("credit-card");
+                //System.out.println(nTarjeta);
+                String tipo = (String) jsonObject.get("tipo");
+                //System.out.println(tipo);
+                String telefono = (String) jsonObject.get("telefono");
+                //System.out.println(telefono);
+                if(jsonObject.get("id") == id) {
+                    writer.write(id);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL ID");
+                }
+                if(jsonObject.get("documento") == doc){
+                    writer.write(doc);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL DOCUMENTO");
+                }
+                if(jsonObject.get("primer-nombre") == nombre){
+                    writer.write(nombre);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL NOMBRE");
+                }
+                if(jsonObject.get("apellido") == apellido){
+                    writer.write(apellido);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL APELLIDO");
+                }
+                if(jsonObject.get("credit-card") == nTarjeta){
+                    writer.write(nTarjeta);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL NUMERO DE TARJETA");
+                }
+                if(jsonObject.get("tipo") == tipo){
+                    writer.write(tipo);
+                    writer.write(";");
+                    System.out.println("ESCRIBIO EL TIPO");
+                }
+                if(jsonObject.get("telefono") == telefono){
+                    writer.write(telefono);
+                    writer.write("\n");
+                    System.out.println("ESCRIBIO EL TELEFONO");
                 }
             }
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("Archivo no encontrado");
-        } catch (IOException io) {
-            System.out.println("No se pudo leer el archivo");
+        } finally {
+            // Cerramos el archivo
+            try {
+                //Verificamos que no este nulo
+                if (null != writer) {
+                    writer.flush();
+                    writer.close();
+                }
+            } catch (Exception e2) {
+                e2.printStackTrace();
+            }
         }
+    }
+
+    public static void guardarJsonJWT (){
 
     }
+
+
+
 }
 
 

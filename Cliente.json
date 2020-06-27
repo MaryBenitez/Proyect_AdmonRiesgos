@@ -2,36 +2,36 @@
   {
     "id": "1",
     "documento": "03991034-7",
-    "nombre": "Jaime",
+    "primer-nombre": "Jaime",
     "apellido": "Climaco",
-    "tarjeta": "4567467811114",
+    "credit-card": "4567467811114",
     "tipo": "GOLD",
     "telefono": "22507878"
   },
   {
     "id": "2",
     "documento": "01992635-1",
-    "nombre": "Juan",
+    "primer-nombre": "Juan",
     "apellido": "Perez",
-    "tarjeta": "1053467877774",
+    "credit-card": "1053467877774",
     "tipo": "SILVER",
     "telefono": "77556879"
   },
   {
     "id": "3",
     "documento": "05530797-8",
-    "nombre": "Andrea",
+    "primer-nombre": "Andrea",
     "apellido": "Benitez",
-    "tarjeta": "1053467871234",
+    "credit-card": "1053467871234",
     "tipo": "GOLD",
     "telefono": "77951321"
   },
   {
     "id": "4",
     "documento": "12345678-9",
-    "nombre": "Irma",
+    "primer-nombre": "Irma",
     "apellido": "Elias",
-    "tarjeta": "1234467871234",
+    "credit-card": "1234467871234",
     "tipo": "SILVER",
     "telefono": "79251035"
   }
