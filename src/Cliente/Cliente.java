@@ -1,23 +1,14 @@
 package Cliente;
 
-import com.google.gson.annotations.SerializedName;
-
 public class Cliente {
 
     //Atributos
-    @SerializedName("id")
     private int idCliente;
-    @SerializedName("documento")
     private String documento;
-    @SerializedName("primer-noombre")
     private String nombre;
-    @SerializedName("apellido")
     private String apellido;
-    @SerializedName("credit-card")
     private String nTarjeta;
-    @SerializedName("tipo")
     private String tipoTarjeta;
-    @SerializedName("telefono")
     private int telefono;
 
     //JSON

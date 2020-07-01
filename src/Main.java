@@ -1,4 +1,3 @@
-import Cliente.Cliente;
 import com.google.gson.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,6 +10,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
+import javax.swing.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -20,11 +20,13 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
+import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
-public class Main {
+public class Main extends Component {
 
     /**
      * @param args the command line arguments
@@ -35,24 +37,15 @@ public class Main {
     private static TransformerHandler th;
     private static AttributesImpl atts;
 
-    private static String id;
-    private static String issuer;
-    private static String subject;
-
-    private static String SECRET_KEY = "oeRaYY7Wo24sDqKSX3IM9ASGmdGPmkTd9jo1QTy4b7P9Ze5_9hKolVX8xNrQDcNRfVEdTZNOuOyqEGhXEbdJI-ZQ19k_o9MI0y3eZN2lp9jow55FfXMiINEdt1XR85VipRLSOkT6kSpzs2x-jbLDiz9iFVzkd81YKxMgPA7VfZeQUm4n-mOmnWMaVX30zGFU4L3oPBctYKkl4dYfqYWqRNfrgPJVi5DGFjywgxx0ASEiJHtV72paI3fDR2XwlSkyhhmY-ICjCRmsJN4fX1pdoL8a18-aQrvyu4j0Os6dVPYIoPvvY0SAZtWYKHfM15g7A3HD4cVREf9cUsprCRK93w";
-
-
-    public static void main(String[] args) {
-
-        Cliente cliente = new Cliente();
-
+    public static void main(String[] args)  {
 
         try {
-            //crearXML(nomArchivo, listaUsuarios);
             convertirTXTtoXML();
-            convertirTXTtoJson();
-            convertirXMLtoTXT();
-            convertirJSONtoTXT();
+            //convertirTXTtoJson();
+            //convertirXMLtoTXT();
+            //convertirJSONtoTXT();
+            //abrirFC();
+            //GuardarArchivo();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -62,23 +55,50 @@ public class Main {
 
     //Funcion para convetir TXT a XML
     public static void convertirTXTtoXML() {
-        String line;
-        try {
-            in = new BufferedReader(new FileReader("Cliente.txt")); //archivo.txt ya creado
-            out = new StreamResult("Cliente.xml"); //archivo.xml a converitr
-            openXml();//---> Funcion que abre xml (Estructura)
-            String str;
-            //While que lee cada linea del archivo.txt
-            while ((str = in.readLine()) != null) {
-                proceso(str);
-            }
-            in.close();
-            closeXml();//---> Funcion que cierra xml (Estructura)
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        selectorArchivos.showOpenDialog(selectorArchivos);
+        File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
+// --------------------------------------------------------------------------------------
+        JFileChooser archivoG = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        archivoG.showSaveDialog(archivoG);
+        File guarda =archivoG.getSelectedFile();
+//--------------------------------------------------------------------------------------
+
+        if ((archivo == null) || (archivo.getName().equals(""))) {
+            JOptionPane.showMessageDialog(selectorArchivos, "Nombre de archivo inválido",
+                    "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+        } else {
+            Scanner entrada = null;
+
+            try {
+                String ruta = selectorArchivos.getSelectedFile().getAbsolutePath();
+                File f = new File(ruta);
+                entrada = new Scanner(f);
+
+                out = new StreamResult(guarda+".xml");
+                openXml();//---> Funcion que abre xml (Estructura)
+
+                while (entrada.hasNext()) {
+                    proceso(entrada.nextLine());
+                }
+
+                closeXml();//---> Funcion que cierra xml (Estructura)
+                entrada.close();
+
+            } catch (FileNotFoundException e) {
+                System.out.println(e.getMessage());
+            } catch (NullPointerException e) {
+                System.out.println("No se ha seleccionado ningún fichero");
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+
+        }
+
+    }
     //Abre el archivo XML (Estructura) para empezar a crearlo
     public static void openXml() throws ParserConfigurationException, TransformerConfigurationException, SAXException {
 
@@ -96,9 +116,9 @@ public class Main {
         atts = new AttributesImpl();
         th.startElement("", "", "Clientes", atts);
     }
-
     //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
     public static void proceso(String s) throws SAXException {
+
 
         String[] elements = s.split("\\;"); //--->Delimitador
         atts.clear();
@@ -131,13 +151,12 @@ public class Main {
         th.endElement("", "", "cliente");
 
     }
-
     //Cierra el archivo.xml (Estructura)
     public static void closeXml() throws SAXException {
         th.endElement("", "", "Clientes");
         th.endDocument();
     }
-
+//-------------------------------------------------------------------------
     //Funcion para convetir TXT a JSON
     public static void convertirTXTtoJson() throws IOException {
 
@@ -151,7 +170,6 @@ public class Main {
             boolean flag = true;
             List<String> columns = null;
             while ((line = br.readLine()) != null) {
-                //System.out.println(line);
                 if (flag) {
                     //process Titulos;
                     columns = Arrays.asList(titulo.split(";")); //---> delimitador
@@ -200,6 +218,7 @@ public class Main {
         }
     }
 
+    //Funcion para convertir XML a TXT
     public static void convertirXMLtoTXT() throws IOException {
 
         try {
@@ -245,6 +264,7 @@ public class Main {
         }
     }
 
+    //Funcion para convertir JSON a TXT
     public static void convertirJSONtoTXT() throws IOException, ParseException {
 
         //Archivo al que vamos a reescribir el JSON
@@ -259,53 +279,39 @@ public class Main {
                 JSONObject jsonObject =  (JSONObject) o;
 
                 String id = (String) jsonObject.get("id");
-                //System.out.println(id);
                 String doc = (String) jsonObject.get("documento");
-                //System.out.println(doc);
                 String nombre = (String) jsonObject.get("primer-nombre");
-                //System.out.println(nombre);
                 String apellido = (String) jsonObject.get("apellido");
-                //System.out.println(apellido);
                 String nTarjeta = (String) jsonObject.get("credit-card");
-                //System.out.println(nTarjeta);
                 String tipo = (String) jsonObject.get("tipo");
-                //System.out.println(tipo);
                 String telefono = (String) jsonObject.get("telefono");
-                //System.out.println(telefono);
                 if(jsonObject.get("id") == id) {
                     writer.write(id);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL ID");
                 }
                 if(jsonObject.get("documento") == doc){
                     writer.write(doc);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL DOCUMENTO");
                 }
                 if(jsonObject.get("primer-nombre") == nombre){
                     writer.write(nombre);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL NOMBRE");
                 }
                 if(jsonObject.get("apellido") == apellido){
                     writer.write(apellido);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL APELLIDO");
                 }
                 if(jsonObject.get("credit-card") == nTarjeta){
                     writer.write(nTarjeta);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL NUMERO DE TARJETA");
                 }
                 if(jsonObject.get("tipo") == tipo){
                     writer.write(tipo);
                     writer.write(";");
-                    System.out.println("ESCRIBIO EL TIPO");
                 }
                 if(jsonObject.get("telefono") == telefono){
                     writer.write(telefono);
                     writer.write("\n");
-                    System.out.println("ESCRIBIO EL TELEFONO");
                 }
             }
         } finally {
@@ -322,12 +328,11 @@ public class Main {
         }
     }
 
+    //Funcion para guardar el objeto JSON utilizando JWT
     public static void guardarJsonJWT (){
 
     }
+    }
 
-
-
-}
 
 
