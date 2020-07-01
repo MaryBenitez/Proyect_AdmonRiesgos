@@ -40,10 +40,10 @@ public class Main extends Component {
     public static void main(String[] args)  {
 
         try {
-            convertirTXTtoXML();
+            //convertirTXTtoXML();
             //convertirTXTtoJson();
             //convertirXMLtoTXT();
-            //convertirJSONtoTXT();
+            convertirJSONtoTXT();
             //abrirFC();
             //GuardarArchivo();
 
@@ -56,16 +56,18 @@ public class Main extends Component {
     //Funcion para convetir TXT a XML
     public static void convertirTXTtoXML() {
 
+        //SELECIONA ARCHIVO A LEER
         JFileChooser selectorArchivos = new JFileChooser();
         selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         selectorArchivos.showOpenDialog(selectorArchivos);
         File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
-// --------------------------------------------------------------------------------------
+// -------------------------------------------------------------------------------------------
+        //ELIGE DONDE GUARDAR
         JFileChooser archivoG = new JFileChooser();
         selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
         archivoG.showSaveDialog(archivoG);
         File guarda =archivoG.getSelectedFile();
-//--------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 
         if ((archivo == null) || (archivo.getName().equals(""))) {
             JOptionPane.showMessageDialog(selectorArchivos, "Nombre de archivo inválido",
@@ -163,20 +165,41 @@ public class Main extends Component {
         //Crea una matriz donde se almacenaran los datos
         JsonArray datasets = new JsonArray();
 
-        try (BufferedReader br = new BufferedReader(new FileReader("Cliente.txt"))) {
+        //SELECCIONA ARCHIVO A LEER
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        selectorArchivos.showOpenDialog(selectorArchivos);
+        File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
+//---------------------------------------------------------------------------------------------
+        //ELIGE DONDE GUARDAR
+        JFileChooser archivoG = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        archivoG.showSaveDialog(archivoG);
+        File guarda =archivoG.getSelectedFile();
+//---------------------------------------------------------------------------------------------
+
+        if((archivo == null) || (archivo.getName().equals(""))){
+            JOptionPane.showMessageDialog(selectorArchivos, "Nombre de archivo inválido",
+                    "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+        }else{
+
+            Scanner entrada = null;
+            String ruta = selectorArchivos.getSelectedFile().getAbsolutePath();
+            File f = new File(ruta);
+            entrada = new Scanner(f);
             //Titlos para el JSON
             String titulo = "id;documento;primer-nombre;apellido;credit-card;tipo;telefono";
             String line;//--> Para las linea que leera del txt
             boolean flag = true;
             List<String> columns = null;
-            while ((line = br.readLine()) != null) {
+            while (entrada.hasNext()) {
                 if (flag) {
                     //process Titulos;
                     columns = Arrays.asList(titulo.split(";")); //---> delimitador
                     //Se crea el objeto JSON y lo almacena temporalmente
                     JsonObject obj = new JsonObject();
                     //Información del cliente (Linea por linea del archivo)
-                    List<String> chunks = Arrays.asList(line.split(";")); //---> delimitador
+                    List<String> chunks = Arrays.asList(entrada.nextLine().split(";")); //---> delimitador
                     for (int i = 0; i < columns.size(); i++) {
                         obj.addProperty(columns.get(i), chunks.get(i));
                     }
@@ -186,146 +209,179 @@ public class Main extends Component {
                     flag = false;
                 }
             }
-        } catch (FileNotFoundException fnfe) {
-            System.out.println("Archivo no encontrado");
-        } catch (IOException io) {
-            System.out.println("No se pudo leer el archivo");
-        }
 
-        //Aqui se le da el formato de JSON y se empieza a crear
-        Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
-        Writer writer = null;
-        try {
-            //Se crea el fichero JSON en la ruta establecida
-            writer = new FileWriter("Cliente.json");
-            //System.out.println(gson.toJson(datasets)); //consola
-            //Se crea el JSON y lo escribimos en el archivo.
-            gson.toJson(datasets, writer);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            // Cerramos el archivo
+            //Aqui se le da el formato de JSON y se empieza a crear
+            Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
+            Writer writer = null;
             try {
-                //Verificamos que no este nulo
-                if (null != writer) {
-                    writer.flush();
-                    writer.close();
+                //Se crea el fichero JSON en la ruta establecida
+                writer = new FileWriter(guarda+".json");
+                //Se crea el JSON y lo escribimos en el archivo.
+                gson.toJson(datasets, writer);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                // Cerramos el archivo
+                try {
+                    //Verificamos que no este nulo
+                    if (null != writer) {
+                        writer.flush();
+                        writer.close();
+                    }
+                } catch (Exception e2) {
+                    e2.printStackTrace();
                 }
-            } catch (Exception e2) {
-                e2.printStackTrace();
             }
         }
+
     }
 
     //Funcion para convertir XML a TXT
     public static void convertirXMLtoTXT() throws IOException {
 
-        try {
-            //Archivo.txt que va a crear
-            BufferedWriter writer = new BufferedWriter(new FileWriter("Cliente-convertido-XML.txt"));
-            //Archivo que leerá
-            File fXmlFile = new File("Cliente.xml");
+        //SELECCIONA ARCHIVO A LEER
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        selectorArchivos.showOpenDialog(selectorArchivos);
+        File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
+//---------------------------------------------------------------------------------------------
+        //ELIGE DONDE GUARDAR
+        JFileChooser archivoG = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        archivoG.showSaveDialog(archivoG);
+        File guarda =archivoG.getSelectedFile();
+//---------------------------------------------------------------------------------------------
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-            Document doc = dBuilder.parse(fXmlFile);
+        if((archivo == null) || (archivo.getName().equals(""))){
+            JOptionPane.showMessageDialog(selectorArchivos, "Nombre de archivo inválido",
+                    "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+        }else {
+            try {
+                //Archivo.txt que va a crear
+                BufferedWriter writer = new BufferedWriter(new FileWriter(guarda+".txt"));
 
-            //Etiqueta va a leer para pasarla a texto
-            NodeList nList = doc.getElementsByTagName("cliente");
+                DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+                Document doc = dBuilder.parse(archivo); //Archivo elegido a leer
 
-            //Nodo Padre
-            for (int i = 0; i < nList.getLength(); i++) {
-                Node node = nList.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE) {
-                    //Creo un elemento que obtendra los hijos
-                    Element eElement = (Element) node;
-                    if (eElement.hasChildNodes()) {
-                        NodeList nl = node.getChildNodes();
-                        for (int j = 0; j < nl.getLength(); j++) {
-                            Node nd = nl.item(j);
-                            String name = nd.getTextContent();
-                            //Compruebo que no este vacio y escribo en el archivo.txt
-                            if (name != null && !name.trim().equals("")) {
-                                writer.write(nd.getTextContent().trim());
-                                //Para que el último dato no tenga el delimitador
-                                if (j < nl.getLength() - 2) {
-                                    writer.write(";");
+                //Etiqueta va a leer para pasarla a texto
+                NodeList nList = doc.getElementsByTagName("cliente");
+
+                //Nodo Padre
+                for (int i = 0; i < nList.getLength(); i++) {
+                    Node node = nList.item(i);
+                    if (node.getNodeType() == Node.ELEMENT_NODE) {
+                        //Creo un elemento que obtendra los hijos
+                        Element eElement = (Element) node;
+                        if (eElement.hasChildNodes()) {
+                            NodeList nl = node.getChildNodes();
+                            for (int j = 0; j < nl.getLength(); j++) {
+                                Node nd = nl.item(j);
+                                String name = nd.getTextContent();
+                                //Compruebo que no este vacio y escribo en el archivo.txt
+                                if (name != null && !name.trim().equals("")) {
+                                    writer.write(nd.getTextContent().trim());
+                                    //Para que el último dato no tenga el delimitador
+                                    if (j < nl.getLength() - 2) {
+                                        writer.write(";");
+                                    }
                                 }
                             }
                         }
                     }
+                    writer.write("\n");
                 }
-                writer.write("\n");
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
+
     }
 
     //Funcion para convertir JSON a TXT
     public static void convertirJSONtoTXT() throws IOException, ParseException {
 
-        //Archivo al que vamos a reescribir el JSON
-        Writer writer = null;
-        writer = new FileWriter("Cliente-convertido-JSON.txt");
+        //SELECCIONA ARCHIVO A LEER
+        JFileChooser selectorArchivos = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        selectorArchivos.showOpenDialog(selectorArchivos);
+        File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
+//---------------------------------------------------------------------------------------------
+        //ELIGE DONDE GUARDAR
+        JFileChooser archivoG = new JFileChooser();
+        selectorArchivos.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        archivoG.showSaveDialog(archivoG);
+        File guarda =archivoG.getSelectedFile();
+//---------------------------------------------------------------------------------------------
 
-        JSONParser parser = new JSONParser();
-        JSONArray a = (JSONArray) parser.parse(new FileReader("Cliente.json"));
-        try {
-            for (Object o : a) {
+        if((archivo == null) || (archivo.getName().equals(""))){
+            JOptionPane.showMessageDialog(selectorArchivos, "Nombre de archivo inválido",
+                    "Nombre de archivo inválido", JOptionPane.ERROR_MESSAGE);
+        }else{
+            //Archivo al que vamos a reescribir el JSON
+            Writer writer;
+            writer = new FileWriter(guarda+".txt");
 
-                JSONObject jsonObject =  (JSONObject) o;
-
-                String id = (String) jsonObject.get("id");
-                String doc = (String) jsonObject.get("documento");
-                String nombre = (String) jsonObject.get("primer-nombre");
-                String apellido = (String) jsonObject.get("apellido");
-                String nTarjeta = (String) jsonObject.get("credit-card");
-                String tipo = (String) jsonObject.get("tipo");
-                String telefono = (String) jsonObject.get("telefono");
-                if(jsonObject.get("id") == id) {
-                    writer.write(id);
-                    writer.write(";");
-                }
-                if(jsonObject.get("documento") == doc){
-                    writer.write(doc);
-                    writer.write(";");
-                }
-                if(jsonObject.get("primer-nombre") == nombre){
-                    writer.write(nombre);
-                    writer.write(";");
-                }
-                if(jsonObject.get("apellido") == apellido){
-                    writer.write(apellido);
-                    writer.write(";");
-                }
-                if(jsonObject.get("credit-card") == nTarjeta){
-                    writer.write(nTarjeta);
-                    writer.write(";");
-                }
-                if(jsonObject.get("tipo") == tipo){
-                    writer.write(tipo);
-                    writer.write(";");
-                }
-                if(jsonObject.get("telefono") == telefono){
-                    writer.write(telefono);
-                    writer.write("\n");
-                }
-            }
-        } finally {
-            // Cerramos el archivo
+            JSONParser parser = new JSONParser();
+            JSONArray a = (JSONArray) parser.parse(new FileReader(archivo));
             try {
-                //Verificamos que no este nulo
-                if (null != writer) {
-                    writer.flush();
-                    writer.close();
+                for (Object o : a) {
+
+                    JSONObject jsonObject =  (JSONObject) o;
+
+                    String id = (String) jsonObject.get("id");
+                    String doc = (String) jsonObject.get("documento");
+                    String nombre = (String) jsonObject.get("primer-nombre");
+                    String apellido = (String) jsonObject.get("apellido");
+                    String nTarjeta = (String) jsonObject.get("credit-card");
+                    String tipo = (String) jsonObject.get("tipo");
+                    String telefono = (String) jsonObject.get("telefono");
+                    if(jsonObject.get("id") == id) {
+                        writer.write(id);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("documento") == doc){
+                        writer.write(doc);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("primer-nombre") == nombre){
+                        writer.write(nombre);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("apellido") == apellido){
+                        writer.write(apellido);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("credit-card") == nTarjeta){
+                        writer.write(nTarjeta);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("tipo") == tipo){
+                        writer.write(tipo);
+                        writer.write(";");
+                    }
+                    if(jsonObject.get("telefono") == telefono){
+                        writer.write(telefono);
+                        writer.write("\n");
+                    }
                 }
-            } catch (Exception e2) {
-                e2.printStackTrace();
+            } finally {
+                // Cerramos el archivo
+                try {
+                    //Verificamos que no este nulo
+                    if (null != writer) {
+                        writer.flush();
+                        writer.close();
+                    }
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                }
             }
         }
+
+
     }
 
     //Funcion para guardar el objeto JSON utilizando JWT
