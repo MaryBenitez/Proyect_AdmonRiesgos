@@ -37,15 +37,16 @@ public class Main extends Component {
     private static TransformerHandler th;
     private static AttributesImpl atts;
 
+
     public static void main(String[] args) {
 
 
-        Vigenere vigenere = new Vigenere("1234567890123","CiAri");
+
 
             try {
                 //convertirTXTtoXML();
                 //convertirTXTtoJson();
-                //convertirXMLtoTXT();
+                convertirXMLtoTXT();
                 //convertirJSONtoTXT();
 
 
@@ -70,6 +71,8 @@ public class Main extends Component {
             //ELIGE DONDE GUARDAR
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos XML", "xml");
+            selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //--------------------------------------------------------------------------------------------
@@ -107,9 +110,9 @@ public class Main extends Component {
             }
 
         }
+
         //Abre el archivo XML (Estructura) para empezar a crearlo
-        public static void openXml () throws
-        ParserConfigurationException, TransformerConfigurationException, SAXException {
+        public static void openXml () throws ParserConfigurationException, TransformerConfigurationException, SAXException {
 
             SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
             th = tf.newTransformerHandler();
@@ -125,6 +128,7 @@ public class Main extends Component {
             atts = new AttributesImpl();
             th.startElement("", "", "Clientes", atts);
         }
+
         //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
         public static void proceso (String s) throws SAXException {
 
@@ -145,8 +149,14 @@ public class Main extends Component {
             th.characters(elements[3].toCharArray(), 0, elements[3].length());
             th.endElement("", "", "apellido");
 
+            boolean ban = true;
             th.startElement("", "", "credit-card", atts);
-            th.characters(elements[4].toCharArray(), 0, elements[4].length());
+            while (ban){
+                Vigenere vigenere = new Vigenere(elements[4],"CiAri");
+                th.characters(vigenere.cifrado, 0, elements[4].length());
+                System.out.println(vigenere.cifrado);
+                ban= false;
+            }
             th.endElement("", "", "credit-card");
 
             th.startElement("", "", "tipo", atts);
@@ -160,6 +170,7 @@ public class Main extends Component {
             th.endElement("", "", "cliente");
 
         }
+
         //Cierra el archivo.xml (Estructura)
         public static void closeXml () throws SAXException {
             th.endElement("", "", "Clientes");
@@ -183,6 +194,8 @@ public class Main extends Component {
             //ELIGE DONDE GUARDAR
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos JSON", "json");
+            selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //---------------------------------------------------------------------------------------------
@@ -260,6 +273,8 @@ public class Main extends Component {
             //ELIGE DONDE GUARDAR
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos de Texto", "txt");
+            selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //---------------------------------------------------------------------------------------------
@@ -293,6 +308,19 @@ public class Main extends Component {
                                     //Compruebo que no este vacio y escribo en el archivo.txt
                                     if (name != null && !name.trim().equals("")) {
                                         writer.write(nd.getTextContent().trim());
+
+
+
+                                            if(j < nl.getLength()-4){
+                                                //Vigenere vigenere = new Vigenere(nd.getTextContent().trim(),"CiAri");
+                                                //writer.write(vigenere.descifrado);
+                                                System.out.println(nd.getTextContent().trim());
+                                            }else{
+
+                                            }
+
+
+
                                         //Para que el último dato no tenga el delimitador
                                         if (j < nl.getLength() - 2) {
                                             writer.write(";");
@@ -325,6 +353,8 @@ public class Main extends Component {
             //ELIGE DONDE GUARDAR
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos de Texto", "txt");
+            selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //---------------------------------------------------------------------------------------------

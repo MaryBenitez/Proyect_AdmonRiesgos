@@ -4,8 +4,10 @@ public class Vigenere {
     char[] clave;
     char[] resultado; //resultado cifrado
     char matriz[][];
+    char[] cifrado;
+    char descifrado[];
 
-    public Vigenere(String msg,String clave)
+    public Vigenere(String msg, String clave)
     {
 
         this.mensaje = msg.toCharArray();
@@ -24,13 +26,13 @@ public class Vigenere {
 
         this.matriz = generarMatrizABC();//Generamos matriz del abecedarioç
         cifrar(); //ciframos el texto
-        System.out.println("-----------------------------");
-        decifrar();
+        //System.out.println("-----------------------------");
+        descifrar();
     }
 
     //Genera cifrado
     public void cifrar(){
-        char[] cifrado = new char[mensaje.length];
+        cifrado = new char[mensaje.length];
         int i;
         int j;
         for(int cont=0;cont<mensaje.length;cont++){
@@ -38,7 +40,6 @@ public class Vigenere {
             //el indice "i" correspondera al arreglo del mensaje
             //el indice "j" correspondera al arreglo de la clave
             //luego ejecutaremos el calculo para cifrar utilizando "i" y "j" como cordenadas de la matriz
-
             i=(int)this.mensaje[cont]-48; //restamos 48 para pasar de codigo ASCII a un numero entero
             j=(int)this.clave[cont]-48;
             cifrado[cont]=this.matriz[i][j];
@@ -47,13 +48,13 @@ public class Vigenere {
 
         this.resultado = cifrado;
 
-        System.out.println();
-        System.out.println("MENSAJE:");
-        System.out.println(this.mensaje);
-        System.out.println("CLAVE:");
-        System.out.println(this.clave);
-        System.out.println("CIFRADO VIGENERE:");
-        System.out.println(cifrado);
+        //System.out.println();
+        //System.out.println("MENSAJE:");
+        //System.out.println(this.mensaje);
+        //System.out.println("CLAVE:");
+        //System.out.println(this.clave);
+        //System.out.println("CIFRADO VIGENERE:");
+        //System.out.println(cifrado);
     }
 
     public String getMensajeCifrado(){
@@ -64,33 +65,21 @@ public class Vigenere {
         return result;
     }
 
-    public void OtorgarValor(){
-        char[] abc = generarAbecedario();
-        int pos = 0;
-        int temp = pos;
-        int[] arr = new int[temp];
-        for (int i=0; i<abc.length; i++){
-            abc[i] = (char) pos;
-            //System.out.println(pos);
-            pos = temp;
-            temp = arr[pos];
-            System.out.println(temp+i);
-            pos++;
+    //Genera descifrado
+    public void descifrar(){
+        descifrado = new char[cifrado.length];
+        int aux= 0;
+        for(int cont=0;cont<cifrado.length;cont++){
+            aux = (this.cifrado[cont] - this.clave[cont]);
+            if(aux<0){
+                aux = aux+75*1;
+            }
+            descifrado[cont]= (char) (aux+48);
         }
-    }
-
-    public void decifrar(){
-
-        getMensajeCifrado();
-        OtorgarValor();
-        //int arrV = OtorgarValor();
-        //System.out.println(arrV);
-        char[] mjsC = getMensajeCifrado().toCharArray();
-        for (int i=0; i<mjsC.length; i++){
-
+        for (int i=0;i<descifrado.length;i++){
+            //System.out.print(descifrado[i]);
         }
-        //System.out.println(abc);
-
+        this.resultado = descifrado;
     }
 
     //Genera la Matriz de Vigenere
