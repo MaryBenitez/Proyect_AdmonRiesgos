@@ -1,4 +1,6 @@
 import com.google.gson.*;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -24,6 +26,7 @@ import javax.xml.transform.stream.StreamResult;
 import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Scanner;
 
@@ -45,8 +48,8 @@ public class Main extends Component {
 
             try {
                 //convertirTXTtoXML();
-                //convertirTXTtoJson();
-                convertirXMLtoTXT();
+                convertirTXTtoJson();
+                //convertirXMLtoTXT();
                 //convertirJSONtoTXT();
 
 
@@ -71,8 +74,8 @@ public class Main extends Component {
             //ELIGE DONDE GUARDAR
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos XML", "xml");
-            selectorArchivos.setFileFilter(filtroG);
+            //FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos XML", "xml");
+            //selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //--------------------------------------------------------------------------------------------
@@ -192,10 +195,15 @@ public class Main extends Component {
             File archivo = selectorArchivos.getSelectedFile(); // obtiene el archivo seleccionado
 //---------------------------------------------------------------------------------------------
             //ELIGE DONDE GUARDAR
+            //JFileChooser archivoG = new JFileChooser();
+            //archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+            //FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos JSON", "json");
+            //selectorArchivos.setFileFilter(filtroG);
+            //archivoG.showSaveDialog(archivoG);
+            //File guarda = archivoG.getSelectedFile();
+
             JFileChooser archivoG = new JFileChooser();
             archivoG.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-            FileNameExtensionFilter filtroG = new FileNameExtensionFilter("Archivos JSON", "json");
-            selectorArchivos.setFileFilter(filtroG);
             archivoG.showSaveDialog(archivoG);
             File guarda = archivoG.getSelectedFile();
 //---------------------------------------------------------------------------------------------
@@ -231,6 +239,8 @@ public class Main extends Component {
                         flag = false;
                     }
                 }
+
+                generateJWT(datasets);
 
                 //Aqui se le da el formato de JSON y se empieza a crear
                 Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE).create();
@@ -426,6 +436,24 @@ public class Main extends Component {
 
 
         }
+
+    public static void generateJWT(JsonArray dataset){
+        String clave = "estaesunaclavesupersecretaylargaparaqueestofuncione";
+        byte[] decodedKey = Base64.getDecoder().decode(clave);
+        String jwt = Jwts.builder()
+                .setPayload(dataset.toString())
+                .signWith(Keys.hmacShaKeyFor(decodedKey))
+                .compact();
+
+        System.out.println(jwt);
+        System.out.println();
+
+        String result = Jwts.parser()
+                .setSigningKey(Keys.hmacShaKeyFor(decodedKey))
+                .parsePlaintextJws(jwt).getBody();
+
+        System.out.println(result);
+    }
 
         //Funcion para guardar el objeto JSON utilizando JWT
         //public static void Vigenere (){ }
