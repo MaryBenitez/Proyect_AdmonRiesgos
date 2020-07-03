@@ -43,13 +43,13 @@ public class Main extends Component {
 
     public static void main(String[] args) {
 
-
+        //Vigenere vigenere3 = new Vigenere("4567467811114","CiAri");
 
 
             try {
                 //convertirTXTtoXML();
-                convertirTXTtoJson();
-                //convertirXMLtoTXT();
+                //convertirTXTtoJson();
+                convertirXMLtoTXT();
                 //convertirJSONtoTXT();
 
 
@@ -155,9 +155,9 @@ public class Main extends Component {
             boolean ban = true;
             th.startElement("", "", "credit-card", atts);
             while (ban){
-                Vigenere vigenere = new Vigenere(elements[4],"CiAri");
-                th.characters(vigenere.cifrado, 0, elements[4].length());
-                System.out.println(vigenere.cifrado);
+                VigenereCifrado vigenereCifrado = new VigenereCifrado(elements[4],"CiAri");
+                th.characters(vigenereCifrado.cifrado, 0, elements[4].length());
+                System.out.println(vigenereCifrado.cifrado);
                 ban= false;
             }
             th.endElement("", "", "credit-card");
@@ -312,29 +312,24 @@ public class Main extends Component {
                             Element eElement = (Element) node;
                             if (eElement.hasChildNodes()) {
                                 NodeList nl = node.getChildNodes();
+                                int aux = nl.getLength();
                                 for (int j = 0; j < nl.getLength(); j++) {
                                     Node nd = nl.item(j);
                                     String name = nd.getTextContent();
                                     //Compruebo que no este vacio y escribo en el archivo.txt
                                     if (name != null && !name.trim().equals("")) {
-                                        writer.write(nd.getTextContent().trim());
 
-
-
-                                            if(j < nl.getLength()-4){
-                                                //Vigenere vigenere = new Vigenere(nd.getTextContent().trim(),"CiAri");
-                                                //writer.write(vigenere.descifrado);
-                                                System.out.println(nd.getTextContent().trim());
-                                            }else{
-
-                                            }
-
-
-
+                                        if(j == 7){
+                                            VigenereDescifrado vigenereDescifrado = new VigenereDescifrado(name,"CiAri");
+                                            writer.write(vigenereDescifrado.descifrado);
+                                        }else{
+                                            writer.write(nd.getTextContent().trim());
+                                        }
                                         //Para que el último dato no tenga el delimitador
                                         if (j < nl.getLength() - 2) {
                                             writer.write(";");
                                         }
+
                                     }
                                 }
                             }
@@ -438,7 +433,7 @@ public class Main extends Component {
         }
 
     public static void generateJWT(JsonArray dataset){
-        String clave = "estaesunaclavesupersecretaylargaparaqueestofuncione";
+        String clave = "EstaEsUnaClaveSuperSecretaYLargaParaQueEstoFuncione";
         byte[] decodedKey = Base64.getDecoder().decode(clave);
         String jwt = Jwts.builder()
                 .setPayload(dataset.toString())
@@ -455,8 +450,6 @@ public class Main extends Component {
         System.out.println(result);
     }
 
-        //Funcion para guardar el objeto JSON utilizando JWT
-        //public static void Vigenere (){ }
     }
 
 
