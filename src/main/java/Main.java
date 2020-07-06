@@ -40,6 +40,12 @@ public class Main extends Component {
     private static TransformerHandler th;
     private static AttributesImpl atts;
 
+    private static String clave = "";
+    private static Scanner claveI = new Scanner(System.in);
+
+    private static String deli = "";
+    private static Scanner deliI = new Scanner(System.in);
+
 
     public static void main(String[] args) {
 
@@ -95,9 +101,16 @@ public class Main extends Component {
                     out = new StreamResult(guarda + ".xml");
                     openXml();//---> Funcion que abre xml (Estructura)
 
+                    System.out.println ("Introduzca clave con la que desea cifrar");
+                    clave = claveI.nextLine();
+                    System.out.println ("Introduzca delimitador");
+                    deli = deliI.nextLine();
+
                     while (entrada.hasNext()) {
                         proceso(entrada.nextLine());
                     }
+
+                    System.out.println ("Número de trajetas cifradas");
 
                     closeXml();//---> Funcion que cierra xml (Estructura)
                     entrada.close();
@@ -135,8 +148,7 @@ public class Main extends Component {
         //FUNCION de Proceso para crear el archivo.xml a traves de la informacion del archivo.txt
         public static void proceso (String s) throws SAXException {
 
-
-            String[] elements = s.split("\\;|\\,|\\^|\\$|\\?|\\+|\\(|\\)|\\:|\\[|\\{"); //--->Delimitador
+            String[] elements = s.split(deli); //--->Delimitador
             atts.clear();
             th.startElement("", "", "cliente", atts);
 
@@ -155,7 +167,7 @@ public class Main extends Component {
             boolean ban = true;
             th.startElement("", "", "credit-card", atts);
             while (ban){
-                VigenereCifrado vigenereCifrado = new VigenereCifrado(elements[4],"CiAri");
+                VigenereCifrado vigenereCifrado = new VigenereCifrado(elements[4],clave);
                 th.characters(vigenereCifrado.cifrado, 0, elements[4].length());
                 System.out.println(vigenereCifrado.cifrado);
                 ban= false;
@@ -222,6 +234,8 @@ public class Main extends Component {
                 String line;//--> Para las linea que leera del txt
                 boolean flag = true;
                 List<String> columns = null;
+                System.out.println ("Introduzca delimitador");
+                deli = deliI.nextLine();
                 while (entrada.hasNext()) {
                     if (flag) {
                         //process Titulos;
@@ -229,7 +243,7 @@ public class Main extends Component {
                         //Se crea el objeto JSON y lo almacena temporalmente
                         JsonObject obj = new JsonObject();
                         //Información del cliente (Linea por linea del archivo)
-                        List<String> chunks = Arrays.asList(entrada.nextLine().split("\\;|\\,|\\^|\\$|\\?|\\+|\\(|\\)|\\:|\\[|\\{")); //---> delimitador
+                        List<String> chunks = Arrays.asList(entrada.nextLine().split(deli)); //---> delimitador
                         for (int i = 0; i < columns.size(); i++) {
                             obj.addProperty(columns.get(i), chunks.get(i));
                         }
@@ -301,6 +315,11 @@ public class Main extends Component {
                     DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
                     Document doc = dBuilder.parse(archivo); //Archivo elegido a leer
 
+                    System.out.println ("Introduzca clave con la que desea descifrar");
+                    clave = claveI.nextLine();
+                    System.out.println ("Introduzca delimitador");
+                    deli = deliI.nextLine();
+
                     //Etiqueta va a leer para pasarla a texto
                     NodeList nList = doc.getElementsByTagName("cliente");
                     int cont=1;
@@ -316,7 +335,7 @@ public class Main extends Component {
                                     Node nd = nl.item(j);
                                     String name = nd.getTextContent();
                                     if(j==0){
-                                            writer.write(cont+";");
+                                            writer.write(cont+deli);
                                             cont++;
                                     }
 
@@ -324,14 +343,14 @@ public class Main extends Component {
                                     if (name != null && !name.trim().equals("")) {
 
                                         if(j == 7){
-                                            VigenereDescifrado vigenereDescifrado = new VigenereDescifrado(name,"CiAri");
+                                            VigenereDescifrado vigenereDescifrado = new VigenereDescifrado(name,clave);
                                             writer.write(vigenereDescifrado.descifrado);
                                         }else{
                                             writer.write(nd.getTextContent().trim());
                                         }
                                         //Para que el último dato no tenga el delimitador
                                         if (j < nl.getLength() - 2) {
-                                            writer.write(";");
+                                            writer.write(deli);
                                         }
 
                                     }
@@ -340,6 +359,8 @@ public class Main extends Component {
                         }
                         writer.write("\n");
                     }
+                    System.out.println ("Tarjetas descifradas");
+                    System.out.println ("Delimitador colocado");
                     writer.close();
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -378,6 +399,10 @@ public class Main extends Component {
 
                 JSONParser parser = new JSONParser();
                 JSONArray a = (JSONArray) parser.parse(new FileReader(archivo));
+
+                System.out.println ("Introduzca delimitador");
+                deli = deliI.nextLine();
+
                 try {
                     for (Object o : a) {
 
@@ -392,27 +417,27 @@ public class Main extends Component {
                         String telefono = (String) jsonObject.get("telefono");
                         if (jsonObject.get("id") == id) {
                             writer.write(id);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("documento") == doc) {
                             writer.write(doc);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("primer-nombre") == nombre) {
                             writer.write(nombre);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("apellido") == apellido) {
                             writer.write(apellido);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("credit-card") == nTarjeta) {
                             writer.write(nTarjeta);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("tipo") == tipo) {
                             writer.write(tipo);
-                            writer.write(";");
+                            writer.write(deli);
                         }
                         if (jsonObject.get("telefono") == telefono) {
                             writer.write(telefono);
